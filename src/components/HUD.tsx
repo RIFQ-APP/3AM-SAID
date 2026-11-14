@@ -7,6 +7,8 @@ import {
   Dices,
   Flame,
   Hand,
+  Menu,
+  X,
   Package,
   Pause,
   RotateCcw,
@@ -126,6 +128,7 @@ export const HUD: React.FC<HUDProps> = ({
   const timeInfo = getTimeOfDayInfo(gameState.clockMinutes);
 
   const [running, setRunning] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [joyKnob, setJoyKnob] = useState({ x: 0, y: 0 });
   const joyPointerId = useRef<number | null>(null);
   const joyCenter = useRef({ x: 0, y: 0 });
@@ -391,46 +394,15 @@ export const HUD: React.FC<HUDProps> = ({
           </div>
         </div>
 
-        {/* Top-End Utility Controls */}
-        <div className="pointer-events-auto flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={onCycleCamera}
-            aria-label={isAr ? 'تبديل الكاميرا' : 'Switch Camera Mode'}
-            className="min-h-[44px] px-3.5 rounded-xl bg-[#1b1109]/95 hover:bg-[#2d1c10] border border-amber-500/45 text-amber-100 text-xs sm:text-sm font-bold cursor-pointer whitespace-nowrap flex items-center gap-1.5"
-          >
-            <Video className="w-4 h-4 text-amber-300" />
-            <span>{camLabel}</span>
-          </button>
-          <button
-            type="button"
-            onClick={onResetCamera}
-            aria-label={isAr ? 'إعادة ضبط الكاميرا' : 'Reset Camera'}
-            className="min-h-[44px] min-w-[44px] px-2.5 rounded-xl bg-[#1b1109]/95 hover:bg-[#2d1c10] border border-amber-500/45 text-amber-200 flex items-center justify-center cursor-pointer"
-          >
-            <RotateCcw className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={onToggleMute}
-            aria-label={isAr ? 'كتم الصوت' : 'Toggle Mute'}
-            className="min-h-[44px] min-w-[44px] px-2.5 rounded-xl bg-[#1b1109]/95 hover:bg-[#2d1c10] border border-amber-500/45 text-amber-200 flex items-center justify-center cursor-pointer"
-          >
-            {gameState.settings.audio.muted ? (
-              <VolumeX className="w-4 h-4 text-red-300" />
-            ) : (
-              <Volume2 className="w-4 h-4" />
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={onPause}
-            aria-label={isAr ? 'إيقاف مؤقت' : 'Pause Game'}
-            className="min-h-[44px] min-w-[44px] px-3 rounded-xl bg-[#1b1109]/95 hover:bg-[#2d1c10] border border-amber-500/45 text-amber-100 flex items-center justify-center cursor-pointer"
-          >
-            <Pause className="w-4 h-4" />
-          </button>
-        </div>
+        {/* Only one essential utility remains visible during play */}
+        <button
+          type="button"
+          onClick={onPause}
+          aria-label={isAr ? 'إيقاف مؤقت' : 'Pause Game'}
+          className="pointer-events-auto min-h-[46px] min-w-[46px] rounded-xl bg-[#1b1109]/95 hover:bg-[#2d1c10] border border-amber-500/45 text-amber-100 flex items-center justify-center cursor-pointer shadow-lg"
+        >
+          <Pause className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Enlarged Corner Mission & Active Orders Cards */}
@@ -532,22 +504,6 @@ export const HUD: React.FC<HUDProps> = ({
             <div className="flex items-center gap-1.5">
               <button
                 type="button"
-                onClick={() => onCameraZoom(-0.8)}
-                aria-label={isAr ? 'تقريب الكاميرا' : 'Zoom In'}
-                className="min-h-[44px] min-w-[44px] rounded-xl bg-[#1b1109]/92 border border-amber-500/45 text-amber-100 font-bold text-lg cursor-pointer"
-              >
-                +
-              </button>
-              <button
-                type="button"
-                onClick={() => onCameraZoom(0.8)}
-                aria-label={isAr ? 'إبعاد الكاميرا' : 'Zoom Out'}
-                className="min-h-[44px] min-w-[44px] rounded-xl bg-[#1b1109]/92 border border-amber-500/45 text-amber-100 font-bold text-lg cursor-pointer"
-              >
-                −
-              </button>
-              <button
-                type="button"
                 onClick={() => {
                   const next = !running;
                   setRunning(next);
@@ -588,30 +544,82 @@ export const HUD: React.FC<HUDProps> = ({
           </div>
         </div>
 
-        {/* Enlarged Bottom Management Navigation Dock with Icons & Badges */}
-        <nav
-          aria-label={isAr ? 'قوائم القهوة' : 'Coffeehouse Menus'}
-          className="pointer-events-auto mx-auto w-full max-w-3xl grid grid-cols-7 gap-1.5 p-1.5 rounded-2xl bg-[#180f08]/95 border border-amber-500/45 shadow-2xl"
-        >
-          {menuTabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => onOpenTab(tab.id)}
-              className="relative min-h-[58px] px-1 py-2 rounded-xl bg-[#24160c]/85 hover:bg-[#3a2313] active:scale-95 text-amber-100 flex flex-col items-center justify-center gap-1 cursor-pointer transition-colors border border-amber-800/35"
-            >
-              {tab.badge > 0 && (
-                <span className="absolute top-1 left-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-mono-nums font-extrabold flex items-center justify-center border border-amber-100/70">
-                  {tab.badge > 9 ? '9+' : tab.badge}
+        {/* Compact management launcher: the full menu opens only when requested */}
+        <div className="pointer-events-auto relative mx-auto w-full max-w-sm">
+          {menuOpen && (
+            <div className="absolute bottom-[calc(100%+10px)] inset-x-0 rounded-2xl border border-amber-500/50 bg-[#180f08]/[0.97] p-3 shadow-2xl backdrop-blur-md">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="text-sm font-extrabold text-amber-200">
+                  {isAr ? 'إدارة القهوة' : 'Coffeehouse Menu'}
                 </span>
-              )}
-              <span className="text-amber-300">{tab.icon}</span>
-              <span className="text-[11px] sm:text-xs font-extrabold whitespace-nowrap truncate max-w-full">
-                {isAr ? tab.labelAr : tab.labelEn}
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen(false)}
+                  aria-label={isAr ? 'إغلاق القائمة' : 'Close menu'}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#3a2415] text-amber-100"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {menuTabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      onOpenTab(tab.id);
+                    }}
+                    className="relative flex min-h-[68px] flex-col items-center justify-center gap-1.5 rounded-xl border border-amber-800/40 bg-[#2a1a0f] px-2 py-2 text-amber-100 transition-colors hover:bg-[#432a18] active:scale-95"
+                  >
+                    {tab.badge > 0 && (
+                      <span className="absolute -top-1 -end-1 flex h-5 min-w-5 items-center justify-center rounded-full border border-amber-100 bg-red-600 px-1 text-[10px] font-extrabold text-white">
+                        {tab.badge > 9 ? '9+' : tab.badge}
+                      </span>
+                    )}
+                    <span className="text-amber-300">{tab.icon}</span>
+                    <span className="text-[11px] font-bold">{isAr ? tab.labelAr : tab.labelEn}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="mt-2 grid grid-cols-4 gap-2 border-t border-amber-800/50 pt-2">
+                <button type="button" onClick={onCycleCamera} className="flex min-h-10 items-center justify-center gap-1 rounded-lg bg-[#2a1a0f] px-2 text-[10px] font-bold text-amber-100">
+                  <Video className="h-4 w-4" />{isAr ? 'كاميرا' : 'Camera'}
+                </button>
+                <button type="button" onClick={onResetCamera} className="flex min-h-10 items-center justify-center gap-1 rounded-lg bg-[#2a1a0f] px-2 text-[10px] font-bold text-amber-100">
+                  <RotateCcw className="h-4 w-4" />{isAr ? 'ضبط' : 'Reset'}
+                </button>
+                <button type="button" onClick={onToggleMute} className="flex min-h-10 items-center justify-center gap-1 rounded-lg bg-[#2a1a0f] px-2 text-[10px] font-bold text-amber-100">
+                  {gameState.settings.audio.muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                  {isAr ? 'الصوت' : 'Sound'}
+                </button>
+                <div className="flex items-center justify-center rounded-lg bg-[#2a1a0f] text-[10px] font-bold text-amber-200">
+                  {camLabel}
+                </div>
+              </div>
+              <div className="mt-2 flex items-center justify-center gap-3">
+                <button type="button" onClick={() => onCameraZoom(-0.8)} className="min-h-9 min-w-12 rounded-lg bg-[#2a1a0f] text-lg font-bold text-amber-100">+</button>
+                <span className="text-[10px] text-amber-200/70">{isAr ? 'تقريب / إبعاد الكاميرا' : 'Camera zoom'}</span>
+                <button type="button" onClick={() => onCameraZoom(0.8)} className="min-h-9 min-w-12 rounded-lg bg-[#2a1a0f] text-lg font-bold text-amber-100">−</button>
+              </div>
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-expanded={menuOpen}
+            aria-label={isAr ? 'فتح قائمة إدارة القهوة' : 'Open coffeehouse menu'}
+            className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-2xl border border-amber-400/55 bg-[#180f08]/95 px-5 py-2.5 text-sm font-extrabold text-amber-100 shadow-2xl"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <span>{isAr ? 'قائمة القهوة' : 'Cafe Menu'}</span>
+            {menuTabs.some((tab) => tab.badge > 0) && (
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-extrabold text-white">
+                {menuTabs.reduce((total, tab) => total + tab.badge, 0) > 9 ? '9+' : menuTabs.reduce((total, tab) => total + tab.badge, 0)}
               </span>
-            </button>
-          ))}
-        </nav>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
