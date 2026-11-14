@@ -159,9 +159,18 @@ export type MustacheStyle = 'none' | 'thin' | 'bushy' | 'handlebar';
 export type HeadwearType = 'none' | 'cap' | 'turban' | 'fez' | 'taqiya';
 export type OutfitStyleType = 'shirt' | 'galabeya' | 'vest_galabeya';
 
+export type CustomerPortraitId =
+  | 'uncle-hosny'
+  | 'young-regular'
+  | 'abu-saeed'
+  | 'customer-woman'
+  | 'delivery-courier'
+  | 'mechanic';
+
 export interface CustomerData {
   id: string;
   archetype: CustomerArchetype;
+  portraitId?: CustomerPortraitId;
   nameAr: string;
   nameEn: string;
   state: NPCState;

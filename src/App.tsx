@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { DrinkPrepModal } from './components/DrinkPrepModal';
+import { CustomerProfileModal } from './components/CustomerProfileModal';
 import { EventModal } from './components/EventModal';
 import { HUD } from './components/HUD';
 import { ManagementDrawers, ManagementTab } from './components/ManagementDrawers';
@@ -85,6 +86,7 @@ export default function App() {
   const [powerOutage, setPowerOutage] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [drawerToast, setDrawerToast] = useState<string | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<CustomerData | null>(null);
 
   const gameStateRef = useRef(gameState);
   gameStateRef.current = gameState;
@@ -219,6 +221,7 @@ export default function App() {
         setOrders((prev) => [...prev, order]);
       },
       onOrderDelivered: handleOrderDelivered,
+      onCustomerSelected: (customer) => setSelectedCustomer(customer),
       onCustomerComplaint: (customer) => {
         setOrders((prev) => prev.filter((o) => o.id !== customer.orderId));
         setGameState((prev) => ({
@@ -925,6 +928,14 @@ export default function App() {
           event={activeEvent}
           language={gameState.settings.language}
           onChoose={handleEventChoice}
+        />
+      )}
+
+      {screenState === 'playing' && selectedCustomer && (
+        <CustomerProfileModal
+          customer={selectedCustomer}
+          language={gameState.settings.language}
+          onClose={() => setSelectedCustomer(null)}
         />
       )}
 

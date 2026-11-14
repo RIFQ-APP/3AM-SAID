@@ -13,6 +13,7 @@ import {
   CarriedDrink,
   CustomerArchetype,
   CustomerData,
+  CustomerPortraitId,
   DrinkId,
   EmployeeRole,
   GameScreenState,
@@ -84,6 +85,7 @@ export interface EngineCallbacks {
     tableDirty: boolean
   ) => void;
   onCustomerComplaint: (customer: CustomerData) => void;
+  onCustomerSelected: (customer: CustomerData) => void;
   onTableCleaned: (tableId: number, byEmployee: boolean) => void;
   onPromptChanged: (prompt: InteractionPrompt | null) => void;
   onBubblesUpdated: (bubbles: ProjectedBubble[]) => void;
@@ -167,6 +169,15 @@ const _camDir = new THREE.Vector3();
 const _camRaycaster = new THREE.Raycaster();
 const _camHits: THREE.Intersection[] = [];
 
+const CUSTOMER_PORTRAIT_IDS: CustomerPortraitId[] = [
+  'uncle-hosny',
+  'young-regular',
+  'abu-saeed',
+  'customer-woman',
+  'delivery-courier',
+  'mechanic',
+];
+
 function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -243,6 +254,8 @@ export class CoffeehouseEngine {
   private camPitch = 0.56;
   private camDist = 5.6;
   private camSensitivity = 1.0;
+  private customerRaycaster = new THREE.Raycaster();
+  private customerPointer = new THREE.Vector2();
   private freeLookTarget = new THREE.Vector3(0, 1.15, 0.2);
   private currentLookAt = new THREE.Vector3(0, 1.1, 0.9);
 
@@ -1383,6 +1396,7 @@ export class CoffeehouseEngine {
     const customerData: CustomerData = {
       id,
       archetype,
+      portraitId: pickRandom(CUSTOMER_PORTRAIT_IDS),
       nameAr,
       nameEn,
       state: 'entering',
@@ -1500,6 +1514,26 @@ export class CoffeehouseEngine {
       this.joystick.x = 0;
       this.joystick.y = 0;
     };
+    const onCanvasClick = (event: MouseEvent) => {
+      if (this.screenState !== 'playing' || this.npcs.length === 0) return;
+      const rect = this.renderer.domElement.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      this.customerPointer.set(
+        ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        -((event.clientY - rect.top) / rect.height) * 2 + 1
+      );
+      this.customerRaycaster.setFromCamera(this.customerPointer, this.camera);
+      const customerGroups = this.npcs
+        .filter((npc) => npc.data.state !== 'leaving')
+        .map((npc) => npc.rig.group);
+      const hit = this.customerRaycaster.intersectObjects(customerGroups, true)[0];
+      if (!hit) return;
+
+      let root: THREE.Object3D | null = hit.object;
+      while (root && root.parent !== this.scene) root = root.parent;
+      const selected = this.npcs.find((npc) => npc.rig.group === root);
+      if (selected) this.callbacks.onCustomerSelected({ ...selected.data });
+    };
     const onResize = () => {
       if (this.disposed) return;
       const w = Math.max(1, this.container.clientWidth || window.innerWidth);
@@ -1527,6 +1561,7 @@ export class CoffeehouseEngine {
     window.addEventListener('keyup', onKeyUp);
     window.addEventListener('blur', onBlur);
     window.addEventListener('resize', onResize);
+    this.renderer.domElement.addEventListener('click', onCanvasClick);
     document.addEventListener('visibilitychange', onVisibilityChange);
 
     // Store cleanup on instance
@@ -1535,6 +1570,7 @@ export class CoffeehouseEngine {
       window.removeEventListener('keyup', onKeyUp);
       window.removeEventListener('blur', onBlur);
       window.removeEventListener('resize', onResize);
+      this.renderer.domElement.removeEventListener('click', onCanvasClick);
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }
