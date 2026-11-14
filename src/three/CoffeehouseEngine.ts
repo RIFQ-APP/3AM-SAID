@@ -263,6 +263,7 @@ export class CoffeehouseEngine {
   private clockAccumulator = 0;
   private simElapsed = 0;
   private lastTickMs = 0;
+  private lastRenderMs = 0;
 
   constructor(
     container: HTMLElement,
@@ -289,18 +290,24 @@ export class CoffeehouseEngine {
       }
     })();
 
+    const initialGraphics = initialState.settings.graphics;
     this.renderer = new THREE.WebGLRenderer({
-      antialias: !this.isSoftwareGl,
-      powerPreference: 'high-performance',
+      antialias: !this.isSoftwareGl && initialGraphics !== 'low',
+      powerPreference: initialGraphics === 'low' ? 'low-power' : 'high-performance',
     });
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.12;
     this.renderer.setPixelRatio(
-      this.isSoftwareGl ? 1 : Math.min(window.devicePixelRatio || 1, 2)
+      this.isSoftwareGl
+        ? 1
+        : Math.min(
+            window.devicePixelRatio || 1,
+            initialGraphics === 'low' ? 0.85 : initialGraphics === 'medium' ? 1.2 : 1.6
+          )
     );
     this.renderer.shadowMap.enabled =
-      !this.isSoftwareGl && initialState.settings.graphics !== 'low';
+      !this.isSoftwareGl && initialGraphics !== 'low';
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     const w = Math.max(320, container.clientWidth || window.innerWidth);
@@ -318,11 +325,13 @@ export class CoffeehouseEngine {
     this.camera = new THREE.PerspectiveCamera(58, w / h, 0.1, 60);
     this.camera.position.set(0, 3.85, 5.45);
 
-    // Studio environment reflections tuned low so directional warmth & shadows stay crisp
-    const pmrem = new THREE.PMREMGenerator(this.renderer);
-    this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    this.scene.environmentIntensity = 0.36;
-    pmrem.dispose();
+    // Skip expensive image-based reflections on Low to reduce startup time and GPU memory.
+    if (initialGraphics !== 'low') {
+      const pmrem = new THREE.PMREMGenerator(this.renderer);
+      this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+      this.scene.environmentIntensity = initialGraphics === 'medium' ? 0.22 : 0.36;
+      pmrem.dispose();
+    }
 
     this.initTextures();
     this.initLighting();
@@ -369,7 +378,8 @@ export class CoffeehouseEngine {
 
     this.keyLight = new THREE.DirectionalLight('#ffddb0', 1.65);
     this.keyLight.position.set(-5.8, 7.2, 4.2);
-    this.keyLight.castShadow = true;
+    this.keyLight.castShadow =
+      !this.isSoftwareGl && this.gameStateSnapshot.settings.graphics !== 'low';
     this.keyLight.shadow.mapSize.set(1024, 1024);
     this.keyLight.shadow.camera.near = 1;
     this.keyLight.shadow.camera.far = 24;
@@ -971,14 +981,17 @@ export class CoffeehouseEngine {
       return;
     }
     if (preset === 'low') {
-      this.renderer.setPixelRatio(1);
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 0.85));
       this.renderer.shadowMap.enabled = false;
+      this.keyLight.castShadow = false;
     } else if (preset === 'medium') {
-      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.2));
       this.renderer.shadowMap.enabled = true;
+      this.keyLight.castShadow = true;
     } else {
-      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
       this.renderer.shadowMap.enabled = true;
+      this.keyLight.castShadow = true;
     }
   }
 
@@ -1447,7 +1460,14 @@ export class CoffeehouseEngine {
       const dt = Math.min(Math.max(rawDt, 0.001), 0.05);
 
       this.update(dt, now);
-      this.renderer.render(this.scene, this.camera);
+      // Low preset caps expensive WebGL drawing at 30 FPS while keeping simulation timing.
+      if (
+        this.gameStateSnapshot.settings.graphics !== 'low' ||
+        now - this.lastRenderMs >= 1000 / 30
+      ) {
+        this.renderer.render(this.scene, this.camera);
+        this.lastRenderMs = now;
+      }
 
       if (this.isSoftwareGl) {
         this.afterDraw(tick);
