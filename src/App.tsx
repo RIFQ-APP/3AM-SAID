@@ -354,7 +354,7 @@ export default function App() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [prepOpen, activeTab]);
+  }, [prepOpen, activeTab, tutorialStep]);
 
   const handleStart = () => {
     soundEngine.unlock();
@@ -387,7 +387,7 @@ export default function App() {
     setPrepOpen(false);
     soundEngine.unlock();
     setEngineEnabled(true);
-    setScreenState('playing');
+    setScreenState(tutorialStep === null ? 'playing' : 'tutorial');
   };
 
   const finishTutorial = () => {
