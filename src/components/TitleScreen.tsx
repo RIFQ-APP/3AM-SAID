@@ -1,5 +1,5 @@
 import React from 'react';
-import { Language } from '../game/types';
+import { GraphicsPreset, Language } from '../game/types';
 
 interface TitleScreenProps {
   language: Language;
@@ -7,6 +7,9 @@ interface TitleScreenProps {
   savedDay: number;
   savedBalance: number;
   onStart: () => void;
+  onNewGame: () => void;
+  graphicsPreset: GraphicsPreset;
+  onChangeGraphics: (preset: GraphicsPreset) => void;
   onToggleLanguage: () => void;
 }
 
@@ -16,6 +19,9 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
   savedDay,
   savedBalance,
   onStart,
+  onNewGame,
+  graphicsPreset,
+  onChangeGraphics,
   onToggleLanguage,
 }) => {
   const isAr = language === 'ar';
@@ -26,8 +32,8 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
       className="fixed inset-0 z-30 flex flex-col justify-between p-6 md:p-10 pointer-events-none"
       style={{
         background: isAr
-          ? 'linear-gradient(255deg, rgba(16, 10, 6, 0.90) 0%, rgba(16, 10, 6, 0.62) 50%, rgba(16, 10, 6, 0.18) 100%)'
-          : 'linear-gradient(105deg, rgba(16, 10, 6, 0.90) 0%, rgba(16, 10, 6, 0.62) 50%, rgba(16, 10, 6, 0.18) 100%)',
+          ? 'radial-gradient(circle at 78% 22%, rgba(180, 83, 9, 0.22), transparent 34%), linear-gradient(255deg, #100a06 0%, #1c1009 58%, #2a170b 100%)'
+          : 'radial-gradient(circle at 22% 22%, rgba(180, 83, 9, 0.22), transparent 34%), linear-gradient(105deg, #100a06 0%, #1c1009 58%, #2a170b 100%)',
       }}
     >
       {/* Top Language Toggle */}
@@ -102,17 +108,46 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
             type="button"
             data-start="true"
             onClick={onStart}
-            className="min-h-[50px] px-8 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-[0.98] text-[#1c1008] font-bold text-lg shadow-lg transition-all cursor-pointer whitespace-nowrap"
+            className="min-h-[52px] px-8 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-[0.98] text-[#1c1008] font-bold text-lg shadow-lg transition-all cursor-pointer whitespace-nowrap"
           >
             {hasSavedProgress
               ? isAr
                 ? 'كمّل الشغل في القهوة'
                 : 'Continue Coffeehouse'
               : isAr
-                ? 'افتح القهوة وابدأ'
-                : 'Open the Coffeehouse'}
+                ? 'ابدأ اللعبة'
+                : 'Start Game'}
           </button>
+          {hasSavedProgress && (
+            <button
+              type="button"
+              onClick={onNewGame}
+              className="min-h-[52px] px-6 py-3 rounded-xl border border-amber-500/45 bg-[#2a190f] hover:bg-[#3a2414] text-amber-100 font-bold transition-colors cursor-pointer whitespace-nowrap"
+            >
+              {isAr ? 'ابدأ قهوة جديدة' : 'New Coffeehouse'}
+            </button>
+          )}
         </div>
+      </div>
+
+      {/* Lightweight home-screen settings */}
+      <div className="flex flex-wrap items-center gap-3 pointer-events-auto">
+        <label className="flex items-center gap-2 rounded-xl border border-amber-700/40 bg-[#23160d]/80 px-4 py-3 text-sm text-amber-100">
+          <span>{isAr ? 'جودة الرسوم' : 'Graphics'}</span>
+          <select
+            value={graphicsPreset}
+            onChange={(event) => onChangeGraphics(event.target.value as GraphicsPreset)}
+            className="bg-transparent text-amber-200 outline-none cursor-pointer"
+            aria-label={isAr ? 'جودة الرسوم' : 'Graphics quality'}
+          >
+            <option value="low" className="bg-[#23160d]">{isAr ? 'خفيفة' : 'Low'}</option>
+            <option value="medium" className="bg-[#23160d]">{isAr ? 'متوسطة' : 'Medium'}</option>
+            <option value="high" className="bg-[#23160d]">{isAr ? 'عالية' : 'High'}</option>
+          </select>
+        </label>
+        <span className="text-xs text-amber-200/60">
+          {isAr ? 'اختار خفيفة لو الموبايل بيهنّج.' : 'Choose Low on slower phones.'}
+        </span>
       </div>
 
       {/* Bottom Clean Control Hint */}
