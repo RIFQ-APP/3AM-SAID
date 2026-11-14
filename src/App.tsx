@@ -332,13 +332,13 @@ export default function App() {
   useEffect(() => {
     if (screenState !== 'playing') return;
     const timer = window.setInterval(() => {
-      if (activeEvent || prepOpen || activeTab) return;
+      if (activeEvent || prepOpen || activeTab || selectedCustomer) return;
       const evId = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
       setActiveEvent(createRandomEvent(evId));
       if (evId === 'power_outage') setPowerOutage(true);
     }, 52000);
     return () => clearInterval(timer);
-  }, [screenState, activeEvent, prepOpen, activeTab]);
+  }, [screenState, activeEvent, prepOpen, activeTab, selectedCustomer]);
 
   // Global keyboard shortcuts for Title / Pause
   useEffect(() => {
@@ -349,7 +349,8 @@ export default function App() {
         setEngineEnabled(true);
         setScreenState(tutorialStep === null ? 'playing' : 'tutorial');
       } else if (e.code === 'Escape' || e.code === 'KeyP') {
-        if (prepOpen) setPrepOpen(false);
+        if (selectedCustomer) setSelectedCustomer(null);
+        else if (prepOpen) setPrepOpen(false);
         else if (activeTab) setActiveTab(null);
         else if (screenRef.current === 'playing') setScreenState('paused');
         else if (screenRef.current === 'paused') setScreenState('playing');
@@ -357,7 +358,7 @@ export default function App() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [prepOpen, activeTab, tutorialStep]);
+  }, [prepOpen, activeTab, tutorialStep, selectedCustomer]);
 
   const handleStart = () => {
     soundEngine.unlock();
