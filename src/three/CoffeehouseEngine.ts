@@ -691,8 +691,76 @@ export class CoffeehouseEngine {
       new THREE.BoxGeometry(0.03, 0.24, 0.02),
       new THREE.MeshBasicMaterial({ color: '#1c1917' })
     );
+
     this.wallClockMinuteHand.position.set(3.8, 3.2, -6.27);
     this.scene.add(this.wallClockMinuteHand);
+
+    // Framed illustrated Egyptian cafe posters on the east wall.
+    const posterSpecs = [
+      { z: -3.7, title: 'شاي مظبوط', subtitle: 'على أصوله', bg: '#244b3b', accent: '#f2c879' },
+      { z: -1.2, title: 'قهوة ع الريحة', subtitle: 'مزاج عالي', bg: '#7c3f24', accent: '#f5d49a' },
+      { z: 1.3, title: 'أهلاً بالجدعان', subtitle: 'القعدة تحلى بيكم', bg: '#31445a', accent: '#f3c66f' },
+    ];
+    posterSpecs.forEach((spec) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 640;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      ctx.fillStyle = spec.bg;
+      ctx.fillRect(0, 0, 512, 640);
+      ctx.strokeStyle = spec.accent;
+      ctx.lineWidth = 18;
+      ctx.strokeRect(20, 20, 472, 600);
+      ctx.strokeStyle = 'rgba(255,255,255,.24)';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(42, 42, 428, 556);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = spec.accent;
+      ctx.font = 'bold 48px sans-serif';
+      ctx.fillText('القهوة البلدي', 256, 112);
+      ctx.beginPath();
+      ctx.arc(256, 310, 112, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(20,12,8,.28)';
+      ctx.fill();
+      ctx.fillStyle = '#f7e7c5';
+      ctx.fillRect(190, 245, 112, 132);
+      ctx.fillStyle = '#9b5a2c';
+      ctx.fillRect(202, 258, 88, 100);
+      ctx.strokeStyle = '#f7e7c5';
+      ctx.lineWidth = 18;
+      ctx.beginPath();
+      ctx.arc(304, 300, 38, -Math.PI / 2, Math.PI / 2);
+      ctx.stroke();
+      ctx.strokeStyle = spec.accent;
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.moveTo(220, 218); ctx.quadraticCurveTo(188, 180, 220, 150);
+      ctx.moveTo(270, 218); ctx.quadraticCurveTo(238, 180, 270, 150);
+      ctx.stroke();
+      ctx.fillStyle = '#fff2d7';
+      ctx.font = 'bold 42px sans-serif';
+      ctx.fillText(spec.title, 256, 492);
+      ctx.font = '30px sans-serif';
+      ctx.fillStyle = spec.accent;
+      ctx.fillText(spec.subtitle, 256, 548);
+      const posterTexture = new THREE.CanvasTexture(canvas);
+      posterTexture.colorSpace = THREE.SRGBColorSpace;
+      posterTexture.anisotropy = Math.min(this.renderer.capabilities.getMaxAnisotropy(), 8);
+      const frame = new THREE.Mesh(
+        new THREE.BoxGeometry(0.1, 1.55, 1.25),
+        new THREE.MeshStandardMaterial({ color: '#8b572e', roughness: 0.48, metalness: 0.12 })
+      );
+      frame.position.set(7.27, 3.0, spec.z);
+      this.scene.add(frame);
+      const picture = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.08, 1.36),
+        new THREE.MeshStandardMaterial({ map: posterTexture, roughness: 0.72 })
+      );
+      picture.rotation.y = -Math.PI / 2;
+      picture.position.set(7.205, 3.0, spec.z);
+      this.scene.add(picture);
+    });
 
     // Cashier Desk + Vintage Tube Radio ("راديو قديم")
     const cashier = createCashierDesk(this.woodTex);
