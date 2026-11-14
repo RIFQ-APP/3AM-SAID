@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings, BookOpen, Info, Volume2, VolumeX, X } from 'lucide-react';
+import { Settings, BookOpen, Info, Volume2, VolumeX, X, Play, Languages, MonitorCog, Gamepad2, Coffee, Users, Trophy, Sparkles, Wallet, ChevronLeft } from 'lucide-react';
 import { TutorialModal } from './TutorialModal';
 import { GraphicsPreset, Language } from '../game/types';
 
@@ -53,8 +53,9 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
           type="button"
           onClick={onToggleLanguage}
           aria-label={isAr ? 'Switch to English' : 'التبديل للعربية'}
-          className="min-h-[44px] px-4 py-2 rounded-lg border border-amber-500/40 bg-[#23160d]/90 text-amber-100 text-sm font-semibold hover:bg-[#342114] transition-colors cursor-pointer"
+          className="flex min-h-[46px] items-center gap-2 rounded-xl border border-amber-500/45 bg-[#23160d]/90 px-4 py-2 text-sm font-bold text-amber-100 shadow-lg transition-colors hover:bg-[#342114] cursor-pointer"
         >
+          <Languages className="h-4 w-4 text-amber-300" />
           {isAr ? 'English' : 'عربي'}
         </button>
       </div>
@@ -62,9 +63,12 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
       {/* Main Lockup in calm negative-space side */}
       <div className="max-w-lg my-auto pointer-events-auto">
         {/* Bespoke inline SVG Baladi Lantern & Tea Glass Crest */}
+        <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-3xl border border-amber-400/40 bg-gradient-to-br from-amber-400/20 to-orange-950/60 text-amber-300 shadow-[0_12px_45px_rgba(217,119,6,0.18)]">
+        <Coffee className="h-11 w-11" strokeWidth={1.7} />
+        </div>
         <svg
           viewBox="0 0 120 84"
-          className="w-24 h-16 mb-4 text-amber-400"
+          className="hidden w-24 h-16 mb-4 text-amber-400"
           aria-hidden="true"
         >
           <path
@@ -118,7 +122,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
             onClick={onStart}
             className="flex min-h-[58px] w-full items-center justify-center gap-3 rounded-xl bg-amber-500 px-8 py-3 text-lg font-extrabold text-[#1c1008] shadow-lg transition-all hover:bg-amber-400 active:scale-[0.98] cursor-pointer"
           >
-            <span className="text-2xl" aria-hidden="true">▶</span>
+            <Play className="h-6 w-6 fill-current" aria-hidden="true" />
             {hasSavedProgress
               ? isAr ? 'متابعة اللعب' : 'Continue Game'
               : isAr ? 'العب الآن' : 'Play Now'}
@@ -140,7 +144,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
               onClick={() => setPanel('settings')}
               className="flex min-h-[76px] flex-col items-center justify-center gap-2 rounded-xl border border-amber-700/45 bg-[#24160d]/90 px-2 py-3 text-sm font-bold text-amber-100 hover:bg-[#382314] cursor-pointer"
             >
-              <Settings className="h-5 w-5 text-amber-300" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-400/10 text-sky-300"><Settings className="h-5 w-5" /></span>
               {isAr ? 'الإعدادات' : 'Settings'}
             </button>
             <button
@@ -148,7 +152,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
               onClick={() => setGuideStep(0)}
               className="flex min-h-[76px] flex-col items-center justify-center gap-2 rounded-xl border border-amber-700/45 bg-[#24160d]/90 px-2 py-3 text-sm font-bold text-amber-100 hover:bg-[#382314] cursor-pointer"
             >
-              <BookOpen className="h-5 w-5 text-amber-300" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/10 text-emerald-300"><BookOpen className="h-5 w-5" /></span>
               {isAr ? 'طريقة اللعب' : 'How to Play'}
             </button>
             <button
@@ -156,9 +160,24 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
               onClick={() => setPanel('about')}
               className="flex min-h-[76px] flex-col items-center justify-center gap-2 rounded-xl border border-amber-700/45 bg-[#24160d]/90 px-2 py-3 text-sm font-bold text-amber-100 hover:bg-[#382314] cursor-pointer"
             >
-              <Info className="h-5 w-5 text-amber-300" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-400/10 text-violet-300"><Info className="h-5 w-5" /></span>
               {isAr ? 'عن اللعبة' : 'About'}
             </button>
+          </div>
+        </div>
+
+        <div className="mt-6 grid grid-cols-3 gap-2">
+          <div className="flex items-center gap-2 rounded-xl border border-amber-800/35 bg-[#24160d]/70 p-2.5">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-400/10 text-amber-300"><Users className="h-5 w-5" /></span>
+            <span className="text-[10px] sm:text-xs font-bold text-amber-100/85">{isAr ? 'زبائن متنوعون' : 'Unique Guests'}</span>
+          </div>
+          <div className="flex items-center gap-2 rounded-xl border border-amber-800/35 bg-[#24160d]/70 p-2.5">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-400/10 text-emerald-300"><Trophy className="h-5 w-5" /></span>
+            <span className="text-[10px] sm:text-xs font-bold text-amber-100/85">{isAr ? 'تحديات وجوائز' : 'Challenges'}</span>
+          </div>
+          <div className="flex items-center gap-2 rounded-xl border border-amber-800/35 bg-[#24160d]/70 p-2.5">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-fuchsia-400/10 text-fuchsia-300"><Sparkles className="h-5 w-5" /></span>
+            <span className="text-[10px] sm:text-xs font-bold text-amber-100/85">{isAr ? 'طوّر قهوتك' : 'Cafe Upgrades'}</span>
           </div>
         </div>
       </div>
@@ -178,7 +197,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
             {panel === 'settings' ? (
               <div className="space-y-3">
                 <label className="flex min-h-14 items-center justify-between gap-3 rounded-xl border border-amber-800/40 bg-[#2a1a0f] px-4 py-3">
-                  <span className="font-bold">{isAr ? 'جودة الرسوم' : 'Graphics Quality'}</span>
+                  <span className="flex items-center gap-2 font-bold"><MonitorCog className="h-5 w-5 text-sky-300" />{isAr ? 'جودة الرسوم' : 'Graphics Quality'}</span>
                   <select
                     value={graphicsPreset}
                     onChange={(event) => onChangeGraphics(event.target.value as GraphicsPreset)}
@@ -191,11 +210,11 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
                   </select>
                 </label>
                 <button type="button" onClick={onToggleLanguage} className="flex min-h-14 w-full items-center justify-between rounded-xl border border-amber-800/40 bg-[#2a1a0f] px-4 py-3 font-bold">
-                  <span>{isAr ? 'لغة اللعبة' : 'Game Language'}</span>
+                  <span className="flex items-center gap-2"><Languages className="h-5 w-5 text-emerald-300" />{isAr ? 'لغة اللعبة' : 'Game Language'}</span>
                   <span className="text-amber-300">{isAr ? 'العربية / English' : 'English / العربية'}</span>
                 </button>
                 <button type="button" onClick={onToggleMute} className="flex min-h-14 w-full items-center justify-between rounded-xl border border-amber-800/40 bg-[#2a1a0f] px-4 py-3 font-bold">
-                  <span>{isAr ? 'الصوت' : 'Sound'}</span>
+                  <span className="flex items-center gap-2"><Volume2 className="h-5 w-5 text-violet-300" />{isAr ? 'الصوت' : 'Sound'}</span>
                   <span className="flex items-center gap-2 text-amber-300">
                     {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
                     {muted ? (isAr ? 'مكتوم' : 'Muted') : (isAr ? 'يعمل' : 'On')}
