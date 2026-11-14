@@ -103,19 +103,10 @@ export default function App() {
     soundEngine.updateSettings(gameState.settings.audio);
   }, [gameState.settings.language, gameState.settings.audio]);
 
-  // Persist save automatically on key changes
+  // Persist the complete state, including settings, clock, reputation and satisfaction.
   useEffect(() => {
     saveGameState(gameState);
-  }, [
-    gameState.day,
-    gameState.level,
-    gameState.xp,
-    gameState.economy.balance,
-    gameState.upgrades,
-    gameState.employees,
-    gameState.inventory,
-    gameState.missions,
-  ]);
+  }, [gameState]);
 
   // Sync latest React state into 3D Engine without tearing down WebGL
   useEffect(() => {
