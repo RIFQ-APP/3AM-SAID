@@ -37,11 +37,14 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
   return (
     <div
       dir={isAr ? 'rtl' : 'ltr'}
-      className="fixed inset-0 z-30 flex flex-col justify-between p-6 md:p-10 pointer-events-none"
+      className="fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto p-[max(1rem,env(safe-area-inset-top))] md:p-10 pointer-events-none"
       style={{
-        background: isAr
-          ? 'radial-gradient(circle at 78% 22%, rgba(180, 83, 9, 0.22), transparent 34%), linear-gradient(255deg, #100a06 0%, #1c1009 58%, #2a170b 100%)'
-          : 'radial-gradient(circle at 22% 22%, rgba(180, 83, 9, 0.22), transparent 34%), linear-gradient(105deg, #100a06 0%, #1c1009 58%, #2a170b 100%)',
+        backgroundImage: isAr
+          ? 'linear-gradient(90deg, rgba(16,10,6,.94) 0%, rgba(28,16,9,.82) 48%, rgba(28,16,9,.42) 100%), url(/images/baladi-cafe-hero.svg)'
+          : 'linear-gradient(270deg, rgba(16,10,6,.94) 0%, rgba(28,16,9,.82) 48%, rgba(28,16,9,.42) 100%), url(/images/baladi-cafe-hero.svg)',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
       }}
     >
       {/* Top Language Toggle */}
@@ -61,7 +64,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
       </div>
 
       {/* Main Lockup in calm negative-space side */}
-      <div className="max-w-lg my-auto pointer-events-auto">
+      <div className="relative z-10 w-full max-w-lg my-auto py-4 pointer-events-auto">
         {/* Bespoke inline SVG Baladi Lantern & Tea Glass Crest */}
         <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-3xl border border-amber-400/40 bg-gradient-to-br from-amber-400/20 to-orange-950/60 text-amber-300 shadow-[0_12px_45px_rgba(217,119,6,0.18)]">
         <Coffee className="h-11 w-11" strokeWidth={1.7} />
@@ -247,7 +250,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
       )}
 
       {/* Bottom Clean Control Hint */}
-      <div className="text-xs sm:text-sm text-amber-200/75 font-medium pointer-events-none">
+      <div className="relative z-10 text-xs sm:text-sm text-amber-200/75 font-medium pointer-events-none pb-[env(safe-area-inset-bottom)]">
         {isAr
           ? 'WASD أو عصا التحكم للحركة · سحب الشاشة للكاميرا · E للتفاعل · C لتغيير زاوية الكاميرا · Esc للإيقاف'
           : 'WASD / Virtual Stick Move · Drag Screen Look · E Interact · C Camera Mode · Esc Pause'}
