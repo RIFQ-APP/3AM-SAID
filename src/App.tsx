@@ -344,7 +344,7 @@ export default function App() {
         e.preventDefault();
         soundEngine.unlock();
         setEngineEnabled(true);
-        setScreenState('playing');
+        setScreenState(tutorialStep === null ? 'playing' : 'tutorial');
       } else if (e.code === 'Escape' || e.code === 'KeyP') {
         if (prepOpen) setPrepOpen(false);
         else if (activeTab) setActiveTab(null);
@@ -359,7 +359,7 @@ export default function App() {
   const handleStart = () => {
     soundEngine.unlock();
     setEngineEnabled(true);
-    setScreenState('playing');
+    setScreenState(tutorialStep === null ? 'playing' : 'tutorial');
   };
 
   const createFreshGame = () => {
@@ -397,6 +397,7 @@ export default function App() {
       // Tutorial completion is optional if storage is unavailable.
     }
     setTutorialStep(null);
+    if (screenRef.current === 'tutorial') setScreenState('playing');
   };
 
   const advanceTutorial = () => {
@@ -680,7 +681,7 @@ export default function App() {
       )}
 
       {/* First-session tutorial */}
-      {screenState === 'playing' && tutorialStep !== null && (
+      {screenState === 'tutorial' && tutorialStep !== null && (
         <TutorialModal
           language={gameState.settings.language}
           step={tutorialStep}
