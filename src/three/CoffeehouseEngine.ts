@@ -2470,17 +2470,32 @@ export class CoffeehouseEngine {
     clearTimeout(this.frameId);
     this.cleanupListeners();
 
+    const disposedTextures = new Set<THREE.Texture>();
+    const disposeMaterial = (material: THREE.Material) => {
+      // Materials may share canvas/generated textures, so dispose each texture once.
+      for (const value of Object.values(material)) {
+        if (value instanceof THREE.Texture && !disposedTextures.has(value)) {
+          disposedTextures.add(value);
+          value.dispose();
+        }
+      }
+      material.dispose();
+    };
+
     this.scene.traverse((obj) => {
       if ((obj as THREE.Mesh).isMesh) {
         const mesh = obj as THREE.Mesh;
         mesh.geometry?.dispose();
         if (Array.isArray(mesh.material)) {
-          mesh.material.forEach((m) => m.dispose());
-        } else {
-          mesh.material?.dispose();
+          mesh.material.forEach(disposeMaterial);
+        } else if (mesh.material) {
+          disposeMaterial(mesh.material);
         }
       }
     });
+    if (this.scene.environment && !disposedTextures.has(this.scene.environment)) {
+      this.scene.environment.dispose();
+    }
 
     this.renderer.dispose();
     if (this.renderer.domElement.parentElement === this.container) {
