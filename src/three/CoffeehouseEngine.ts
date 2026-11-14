@@ -312,8 +312,8 @@ export class CoffeehouseEngine {
       !this.isSoftwareGl && initialGraphics !== 'low';
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    const w = Math.max(320, container.clientWidth || window.innerWidth);
-    const h = Math.max(240, container.clientHeight || window.innerHeight);
+    const w = Math.max(1, container.clientWidth || window.innerWidth);
+    const h = Math.max(1, container.clientHeight || window.innerHeight);
     this.renderer.setSize(w, h);
     this.renderer.domElement.style.display = 'block';
     this.renderer.domElement.style.width = '100%';
@@ -1434,8 +1434,8 @@ export class CoffeehouseEngine {
     };
     const onResize = () => {
       if (this.disposed) return;
-      const w = Math.max(320, this.container.clientWidth || window.innerWidth);
-      const h = Math.max(240, this.container.clientHeight || window.innerHeight);
+      const w = Math.max(1, this.container.clientWidth || window.innerWidth);
+      const h = Math.max(1, this.container.clientHeight || window.innerHeight);
       this.camera.aspect = w / h;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(w, h);
