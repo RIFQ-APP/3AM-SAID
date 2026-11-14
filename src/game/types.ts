@@ -1,6 +1,6 @@
 export type Language = 'ar' | 'en';
 
-export type GameScreenState = 'title' | 'playing' | 'paused' | 'gameover';
+export type GameScreenState = 'title' | 'tutorial' | 'playing' | 'paused' | 'gameover';
 
 export type CameraMode = 'third_person' | 'first_person' | 'free_look';
 
