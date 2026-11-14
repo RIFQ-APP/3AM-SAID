@@ -29,11 +29,13 @@ import {
   Volume2,
   VolumeX,
   Wallet,
+  MonitorCog,
 } from 'lucide-react';
 import { DRINKS, UPGRADES } from '../game/catalog';
 import { getTimeOfDayInfo } from '../game/economy';
 import {
   CameraMode,
+  GraphicsPreset,
   CarriedDrink,
   CustomerActivity,
   DrinkId,
@@ -64,6 +66,8 @@ interface HUDProps {
   onPause: () => void;
   onOpenTab: (tab: ManagementTab) => void;
   onOpenPrep: () => void;
+  graphicsPreset: GraphicsPreset;
+  onChangeGraphics: (preset: GraphicsPreset) => void;
 }
 
 function renderDrinkOverheadIcon(drinkId: DrinkId | null) {
@@ -131,6 +135,8 @@ export const HUD: React.FC<HUDProps> = ({
   onPause,
   onOpenTab,
   onOpenPrep,
+  graphicsPreset,
+  onChangeGraphics,
 }) => {
   const isAr = gameState.settings.language === 'ar';
   const timeInfo = getTimeOfDayInfo(gameState.clockMinutes);
@@ -590,7 +596,7 @@ export const HUD: React.FC<HUDProps> = ({
                   </button>
                 ))}
               </div>
-              <div className="mt-2 grid grid-cols-4 gap-2 border-t border-amber-800/50 pt-2">
+              <div className="mt-2 grid grid-cols-5 gap-2 border-t border-amber-800/50 pt-2">
                 <button type="button" onClick={onCycleCamera} className="flex min-h-10 items-center justify-center gap-1 rounded-lg bg-[#2a1a0f] px-2 text-[10px] font-bold text-amber-100">
                   <Camera className="h-4 w-4" />{isAr ? 'كاميرا' : 'Camera'}
                 </button>
@@ -604,6 +610,9 @@ export const HUD: React.FC<HUDProps> = ({
                 <div className="flex items-center justify-center rounded-lg bg-[#2a1a0f] text-[10px] font-bold text-amber-200">
                   {camLabel}
                 </div>
+                <button type="button" onClick={() => onChangeGraphics(graphicsPreset === 'low' ? 'medium' : graphicsPreset === 'medium' ? 'high' : 'low')} className="flex min-h-10 items-center justify-center gap-1 rounded-lg bg-[#2a1a0f] px-1 text-[10px] font-bold text-amber-100" aria-label={isAr ? 'تغيير جودة الرسوم' : 'Change graphics quality'}>
+                  <MonitorCog className="h-4 w-4 text-amber-300" />{isAr ? (graphicsPreset === 'low' ? 'خفيفة' : graphicsPreset === 'medium' ? 'متوسطة' : 'عالية') : graphicsPreset.toUpperCase()}
+                </button>
               </div>
               <div className="mt-2 flex items-center justify-center gap-3">
                 <button type="button" onClick={() => onCameraZoom(-0.8)} className="min-h-9 min-w-12 rounded-lg bg-[#2a1a0f] text-lg font-bold text-amber-100"><ZoomIn className="mx-auto h-4 w-4" /></button>
