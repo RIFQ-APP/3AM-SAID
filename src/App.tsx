@@ -60,6 +60,11 @@ export default function App() {
     }
     return 'title';
   });
+  // Keep the title screen lightweight: create the WebGL world only after the player starts.
+  const [engineEnabled, setEngineEnabled] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return new URLSearchParams(window.location.search).get('autostart') === '1';
+  });
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [bubbles, setBubbles] = useState<ProjectedBubble[]>([]);
@@ -209,7 +214,7 @@ export default function App() {
 
   // Mount Three.js Coffeehouse Engine ONCE
   useEffect(() => {
-    if (!mountRef.current) return;
+    if (!engineEnabled || !mountRef.current) return;
     const engine = new CoffeehouseEngine(mountRef.current, gameStateRef.current, {
       onOrderCreated: (order) => {
         setOrders((prev) => [...prev, order]);
@@ -319,7 +324,7 @@ export default function App() {
       engine.dispose();
       engineRef.current = null;
     };
-  }, [handleOrderDelivered, showToast]);
+  }, [engineEnabled, handleOrderDelivered, showToast]);
 
   // Random Events Scheduler (every ~55 seconds while playing)
   useEffect(() => {
@@ -339,6 +344,7 @@ export default function App() {
       if (screenRef.current === 'title' && (e.code === 'Enter' || e.code === 'Space')) {
         e.preventDefault();
         soundEngine.unlock();
+        setEngineEnabled(true);
         setScreenState('playing');
       } else if (e.code === 'Escape' || e.code === 'KeyP') {
         if (prepOpen) setPrepOpen(false);
@@ -353,6 +359,22 @@ export default function App() {
 
   const handleStart = () => {
     soundEngine.unlock();
+    setEngineEnabled(true);
+    setScreenState('playing');
+  };
+
+  const handleNewGame = () => {
+    const fresh = clearGameSave();
+    setGameState(fresh);
+    setOrders([]);
+    setBubbles([]);
+    setPrompt(null);
+    setCarriedDrink(null);
+    setActiveEvent(null);
+    setActiveTab(null);
+    setPrepOpen(false);
+    soundEngine.unlock();
+    setEngineEnabled(true);
     setScreenState('playing');
   };
 
@@ -534,11 +556,13 @@ export default function App() {
   return (
     <main className="relative w-full h-full overflow-hidden bg-[#16100b]">
       {/* Isolated 3D WebGL Viewport Container */}
-      <div
-        ref={mountRef}
-        data-testid="coffeehouse-canvas"
-        className="absolute inset-0 w-full h-full"
-      />
+      {engineEnabled && (
+        <div
+          ref={mountRef}
+          data-testid="coffeehouse-canvas"
+          className="absolute inset-0 w-full h-full"
+        />
+      )}
 
       {/* Title Screen */}
       {screenState === 'title' && (
@@ -548,6 +572,14 @@ export default function App() {
           savedDay={gameState.day}
           savedBalance={gameState.economy.balance}
           onStart={handleStart}
+          onNewGame={handleNewGame}
+          graphicsPreset={gameState.settings.graphics}
+          onChangeGraphics={(graphics) =>
+            setGameState((prev) => ({
+              ...prev,
+              settings: { ...prev.settings, graphics },
+            }))
+          }
           onToggleLanguage={() =>
             setGameState((prev) => ({
               ...prev,
@@ -854,7 +886,10 @@ export default function App() {
             engineRef.current?.setCarriedDrink(null);
             setScreenState('playing');
           }}
-          onToTitle={() => setScreenState('title')}
+          onToTitle={() => {
+            setEngineEnabled(false);
+            setScreenState('title');
+          }}
         />
       )}
     </main>
