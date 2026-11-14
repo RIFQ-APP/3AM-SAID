@@ -2,6 +2,14 @@ import React, { useRef, useState } from 'react';
 import {
   AlertTriangle,
   ClipboardList,
+  Coins,
+  Star,
+  CalendarDays,
+  Gamepad2,
+  Footprints,
+  Camera,
+  ZoomIn,
+  ZoomOut,
   Coffee,
   CupSoda,
   Dices,
@@ -349,8 +357,8 @@ export const HUD: React.FC<HUDProps> = ({
         {/* Top-Start Economy & Progression Strip */}
         <div className="pointer-events-auto flex flex-wrap items-center gap-4 px-4 py-2.5 rounded-2xl bg-[#1b1109]/95 border border-amber-500/45 text-amber-50 shadow-xl">
           <div>
-            <div className="text-[11px] text-amber-300/90 font-bold">
-              {isAr ? 'الخزنة' : 'CASH'}
+            <div className="flex items-center gap-1.5 text-[11px] text-amber-300/90 font-bold">
+              <Coins className="h-3.5 w-3.5" />{isAr ? 'الخزنة' : 'CASH'}
             </div>
             <div
               data-testid="hud-balance"
@@ -363,8 +371,8 @@ export const HUD: React.FC<HUDProps> = ({
           <div className="h-7 w-px bg-amber-700/40" />
 
           <div>
-            <div className="text-[11px] text-amber-300/90 font-bold">
-              {isAr ? 'المستوى' : 'LEVEL'}
+            <div className="flex items-center gap-1.5 text-[11px] text-amber-300/90 font-bold">
+              <Trophy className="h-3.5 w-3.5" />{isAr ? 'المستوى' : 'LEVEL'}
             </div>
             <div className="text-base sm:text-lg font-mono-nums font-extrabold text-amber-100 leading-tight">
               {gameState.level}
@@ -374,8 +382,8 @@ export const HUD: React.FC<HUDProps> = ({
           <div className="h-7 w-px bg-amber-700/40" />
 
           <div>
-            <div className="text-[11px] text-amber-300/90 font-bold">
-              {isAr ? 'السمعة' : 'REP'}
+            <div className="flex items-center gap-1.5 text-[11px] text-amber-300/90 font-bold">
+              <Star className="h-3.5 w-3.5" />{isAr ? 'السمعة' : 'REP'}
             </div>
             <div className="text-base sm:text-lg font-mono-nums font-extrabold text-amber-300 leading-tight">
               {gameState.reputation}%
@@ -385,8 +393,8 @@ export const HUD: React.FC<HUDProps> = ({
           <div className="hidden sm:block h-7 w-px bg-amber-700/40" />
 
           <div className="hidden sm:block">
-            <div className="text-[11px] text-amber-300/90 font-bold">
-              {isAr ? `يوم ${gameState.day}` : `Day ${gameState.day}`}
+            <div className="flex items-center gap-1.5 text-[11px] text-amber-300/90 font-bold">
+              <CalendarDays className="h-3.5 w-3.5" />{isAr ? `يوم ${gameState.day}` : `Day ${gameState.day}`}
             </div>
             <div className="text-sm sm:text-base font-bold text-amber-100 leading-tight">
               {isAr ? timeInfo.labelAr : timeInfo.labelEn}
@@ -495,8 +503,8 @@ export const HUD: React.FC<HUDProps> = ({
               style={{
                 transform: `translate(${joyKnob.x}px, ${joyKnob.y}px)`,
               }}
-              className="w-11 h-11 rounded-full bg-amber-500/95 border-2 border-amber-200 shadow-md"
-            />
+              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-amber-100 bg-gradient-to-br from-amber-300 to-amber-600 text-[#241306] shadow-lg"
+            ><Gamepad2 className="h-6 w-6" /></div>
           </div>
 
           {/* Right Thumb Actions */}
@@ -516,7 +524,7 @@ export const HUD: React.FC<HUDProps> = ({
                     : 'bg-[#1b1109]/92 text-amber-100 border-amber-500/45'
                 }`}
               >
-                {isAr ? (running ? 'جري ✓' : 'جري') : running ? 'Run ✓' : 'Run'}
+                <span className="inline-flex items-center gap-2"><Footprints className="h-4 w-4" />{isAr ? (running ? 'جري ✓' : 'جري') : running ? 'Run ✓' : 'Run'}</span>
               </button>
             </div>
 
@@ -584,7 +592,7 @@ export const HUD: React.FC<HUDProps> = ({
               </div>
               <div className="mt-2 grid grid-cols-4 gap-2 border-t border-amber-800/50 pt-2">
                 <button type="button" onClick={onCycleCamera} className="flex min-h-10 items-center justify-center gap-1 rounded-lg bg-[#2a1a0f] px-2 text-[10px] font-bold text-amber-100">
-                  <Video className="h-4 w-4" />{isAr ? 'كاميرا' : 'Camera'}
+                  <Camera className="h-4 w-4" />{isAr ? 'كاميرا' : 'Camera'}
                 </button>
                 <button type="button" onClick={onResetCamera} className="flex min-h-10 items-center justify-center gap-1 rounded-lg bg-[#2a1a0f] px-2 text-[10px] font-bold text-amber-100">
                   <RotateCcw className="h-4 w-4" />{isAr ? 'ضبط' : 'Reset'}
@@ -598,9 +606,9 @@ export const HUD: React.FC<HUDProps> = ({
                 </div>
               </div>
               <div className="mt-2 flex items-center justify-center gap-3">
-                <button type="button" onClick={() => onCameraZoom(-0.8)} className="min-h-9 min-w-12 rounded-lg bg-[#2a1a0f] text-lg font-bold text-amber-100">+</button>
+                <button type="button" onClick={() => onCameraZoom(-0.8)} className="min-h-9 min-w-12 rounded-lg bg-[#2a1a0f] text-lg font-bold text-amber-100"><ZoomIn className="mx-auto h-4 w-4" /></button>
                 <span className="text-[10px] text-amber-200/70">{isAr ? 'تقريب / إبعاد الكاميرا' : 'Camera zoom'}</span>
-                <button type="button" onClick={() => onCameraZoom(0.8)} className="min-h-9 min-w-12 rounded-lg bg-[#2a1a0f] text-lg font-bold text-amber-100">−</button>
+                <button type="button" onClick={() => onCameraZoom(0.8)} className="min-h-9 min-w-12 rounded-lg bg-[#2a1a0f] text-lg font-bold text-amber-100" aria-label={isAr ? 'إبعاد الكاميرا' : 'Zoom out'}><ZoomOut className="mx-auto h-4 w-4" /></button>
               </div>
             </div>
           )}
@@ -612,7 +620,7 @@ export const HUD: React.FC<HUDProps> = ({
             className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-2xl border border-amber-400/55 bg-[#180f08]/95 px-5 py-2.5 text-sm font-extrabold text-amber-100 shadow-2xl"
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            <span>{isAr ? 'قائمة القهوة' : 'Cafe Menu'}</span>
+            <span className="inline-flex items-center gap-2"><Coffee className="h-5 w-5 text-amber-300" />{isAr ? 'قائمة القهوة' : 'Cafe Menu'}</span>
             {menuTabs.some((tab) => tab.badge > 0) && (
               <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-extrabold text-white">
                 {menuTabs.reduce((total, tab) => total + tab.badge, 0) > 9 ? '9+' : menuTabs.reduce((total, tab) => total + tab.badge, 0)}
