@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+<title id="title">القهوة البلدي</title><desc id="desc">Illustrated warm Egyptian neighborhood coffeehouse interior at golden hour</desc>
+<defs>
+ <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#a65f2d"/><stop offset="1" stop-color="#4b2818"/></linearGradient>
+ <linearGradient id="floor" x2="0" y2="1"><stop stop-color="#714326"/><stop offset="1" stop-color="#24140e"/></linearGradient>
+ <linearGradient id="light" x2="0" y2="1"><stop stop-color="#ffd27a" stop-opacity=".8"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></linearGradient>
+ <pattern id="tiles" width="90" height="90" patternUnits="userSpaceOnUse"><path d="M45 4 86 45 45 86 4 45Z" fill="none" stroke="#d69a54" stroke-opacity=".26" stroke-width="5"/><circle cx="45" cy="45" r="8" fill="#e5b36b" fill-opacity=".18"/></pattern>
+ <filter id="soft"><feGaussianBlur stdDeviation="22"/></filter>
+</defs>
+<rect width="1600" height="900" fill="#1c100a"/><path d="M0 0h1600v640H0Z" fill="url(#wall)"/><path d="M0 0h1600v640H0Z" fill="url(#tiles)" opacity=".7"/>
+<path d="M0 640h1600v260H0Z" fill="url(#floor)"/><path d="M0 640h1600v260H0Z" fill="url(#tiles)" opacity=".32"/>
+<ellipse cx="820" cy="230" rx="520" ry="190" fill="#ffc46b" opacity=".18" filter="url(#soft)"/>
+<!-- arched windows -->
+<g stroke="#28170e" stroke-width="22" fill="#e7a451">
+ <path d="M115 370V185a135 135 0 0 1 270 0v185Z"/><path d="M430 370V185a135 135 0 0 1 270 0v185Z"/>
+</g>
+<g fill="#713c20" opacity=".95"><path d="M145 350V190a105 105 0 0 1 210 0v160Z"/><path d="M460 350V190a105 105 0 0 1 210 0v160Z"/></g>
+<g stroke="#e9b96e" stroke-width="12" opacity=".75"><path d="M250 82v268M145 215h210M565 82v268M460 215h210"/></g>
+<path d="M145 350 355 350 355 380 145 380ZM460 350h210v30H460Z" fill="#301b11"/>
+<!-- hanging lanterns -->
+<g stroke="#27150c" stroke-width="9" fill="#e6a34b"><path d="M850 0v95M820 95h60l-8 100h-44Z"/><path d="M1050 0v70M1022 70h56l-8 92h-40Z"/></g>
+<g fill="#ffd783" opacity=".65"><ellipse cx="850" cy="150" rx="35" ry="58"/><ellipse cx="1050" cy="126" rx="28" ry="48"/></g>
+<!-- back counter -->
+<path d="M730 385h740v245H730Z" fill="#332016" stroke="#bd8545" stroke-width="13"/>
+<path d="M700 380h800v45H700Z" fill="#d39a53" stroke="#3b2113" stroke-width="12"/>
+<g fill="#f4c77b"><rect x="790" y="450" width="120" height="140" rx="12"/><rect x="930" y="450" width="120" height="140" rx="12"/><rect x="1070" y="450" width="120" height="140" rx="12"/></g>
+<g fill="#754021"><path d="M810 470h80v95h-80ZM950 470h80v95h-80ZM1090 470h80v95h-80Z"/></g>
+<!-- shelves and cups -->
+<path d="M760 330h690v22H760Z" fill="#2a170e"/><g fill="#f0d7a7" stroke="#5b351d" stroke-width="6"><path d="M815 280h50v50h-50ZM895 270h50v60h-50ZM975 280h50v50h-50ZM1055 270h50v60h-50ZM1135 280h50v50h-50ZM1215 270h50v60h-50Z"/></g>
+<!-- tables -->
+<g stroke="#29170e" stroke-width="18"><path d="M160 670v170m190-170v170M470 650v190m210-190v190M1000 680v160m220-160v160"/></g>
+<g fill="#a96b35" stroke="#f0bd70" stroke-width="10"><ellipse cx="255" cy="655" rx="160" ry="42"/><ellipse cx="575" cy="635" rx="160" ry="42"/><ellipse cx="1110" cy="665" rx="175" ry="45"/></g>
+<!-- tea glasses -->
+<g fill="#f5c66e" stroke="#fff0c5" stroke-width="6"><path d="M210 590h42l-5 54h-32Z"/><path d="M555 570h42l-5 54h-32Z"/><path d="M1090 600h42l-5 54h-32Z"/></g>
+<g fill="none" stroke="#fff1c7" stroke-width="5" opacity=".8"><path d="M222 578q-18-30 0-48m18 48q-18-30 0-48M567 558q-18-30 0-48m18 48q-18-30 0-48"/></g>
+<!-- framed wall art -->
+<g><rect x="1260" y="115" width="220" height="205" rx="8" fill="#24150d" stroke="#e1ac5f" stroke-width="14"/><rect x="1280" y="135" width="180" height="165" fill="#8a4b25"/><path d="M1320 250q50-110 100 0" fill="none" stroke="#f5c777" stroke-width="12"/><circle cx="1370" cy="190" r="28" fill="#f5c777"/><path d="M1305 275h130" stroke="#f5c777" stroke-width="8"/></g>
+<!-- foreground silhouettes and warm vignette -->
+<path d="M0 0h1600v900H0Z" fill="none" stroke="#120a06" stroke-width="100" opacity=".35"/>
+<rect width="1600" height="900" fill="url(#light)" opacity=".22"/>
+</svg>
