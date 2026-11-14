@@ -2,9 +2,9 @@
 
 @layer base {
   :root {
-    --font-display: 'Amiri', 'Cairo', serif;
-    --font-sans: 'Cairo', system-ui, -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --font-display: 'Noto Naskh Arabic', 'Noto Sans Arabic', serif;
+    --font-sans: 'Noto Sans Arabic', 'Noto Naskh Arabic', system-ui, sans-serif;
+    --font-mono: monospace;
   }
 
   html,
