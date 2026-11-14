@@ -354,8 +354,21 @@ export default function App() {
     setScreenState('playing');
   };
 
-  const handleNewGame = () => {
+  const createFreshGame = () => {
     const fresh = clearGameSave();
+    const currentSettings = gameStateRef.current.settings;
+    return {
+      ...fresh,
+      settings: {
+        ...fresh.settings,
+        ...currentSettings,
+        audio: { ...fresh.settings.audio, ...currentSettings.audio },
+      },
+    };
+  };
+
+  const handleNewGame = () => {
+    const fresh = createFreshGame();
     setGameState(fresh);
     setOrders([]);
     setBubbles([]);
@@ -843,7 +856,7 @@ export default function App() {
             setDrawerToast(isAr ? 'تم حفظ التقدم بنجاح!' : 'Game progress saved!');
           }}
           onResetSave={() => {
-            const fresh = clearGameSave();
+            const fresh = createFreshGame();
             setGameState(fresh);
             setOrders([]);
             engineRef.current?.setCarriedDrink(null);
@@ -871,7 +884,7 @@ export default function App() {
           reputation={gameState.reputation}
           onResume={() => setScreenState('playing')}
           onRestart={() => {
-            const fresh = clearGameSave();
+            const fresh = createFreshGame();
             setGameState(fresh);
             setOrders([]);
             engineRef.current?.setCarriedDrink(null);
