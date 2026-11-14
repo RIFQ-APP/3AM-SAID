@@ -40,7 +40,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
       className="fixed inset-0 z-30 flex flex-col justify-between overflow-y-auto p-[max(1rem,env(safe-area-inset-top))] md:p-10 pointer-events-none"
       style={{
         backgroundImage: isAr
-          ? 'linear-gradient(90deg, rgba(16,10,6,.94) 0%, rgba(28,16,9,.82) 48%, rgba(28,16,9,.42) 100%), url(/images/baladi-cafe-hero.svg)'
+          ? 'linear-gradient(270deg, rgba(16,10,6,.94) 0%, rgba(28,16,9,.82) 48%, rgba(28,16,9,.42) 100%), url(/images/baladi-cafe-hero.svg)'
           : 'linear-gradient(270deg, rgba(16,10,6,.94) 0%, rgba(28,16,9,.82) 48%, rgba(28,16,9,.42) 100%), url(/images/baladi-cafe-hero.svg)',
         backgroundPosition: 'center',
         backgroundSize: 'cover',
