@@ -20,10 +20,12 @@ const PORTRAIT_CELLS: Record<CustomerPortraitId, { column: number; row: number }
 
 const STATE_LABELS_AR: Record<CustomerData['state'], string> = {
   entering: 'داخل القهوة',
+  looking_for_seat: 'بيدوّر على مكان',
   walking_to_table: 'رايح لترابيزته',
   sitting: 'قاعد وبيختار',
   ordering: 'بيطلب',
   waiting: 'مستني طلبه',
+  talking: 'بيتكلم مع اللي حواليه',
   complaining: 'مستعجل ومتنرفز',
   drinking: 'بيشرب طلبه',
   paying: 'بيحاسب',
@@ -32,10 +34,12 @@ const STATE_LABELS_AR: Record<CustomerData['state'], string> = {
 
 const STATE_LABELS_EN: Record<CustomerData['state'], string> = {
   entering: 'Just arrived',
+  looking_for_seat: 'Looking for a seat',
   walking_to_table: 'Finding a table',
   sitting: 'Choosing a drink',
   ordering: 'Placing an order',
   waiting: 'Waiting for the order',
+  talking: 'Chatting with friends',
   complaining: 'Getting impatient',
   drinking: 'Enjoying the drink',
   paying: 'Paying',
