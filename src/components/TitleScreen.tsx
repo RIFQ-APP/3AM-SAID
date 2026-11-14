@@ -1,4 +1,6 @@
 import React from 'react';
+import { Settings, BookOpen, Info, Volume2, VolumeX, X } from 'lucide-react';
+import { TutorialModal } from './TutorialModal';
 import { GraphicsPreset, Language } from '../game/types';
 
 interface TitleScreenProps {
@@ -11,6 +13,8 @@ interface TitleScreenProps {
   graphicsPreset: GraphicsPreset;
   onChangeGraphics: (preset: GraphicsPreset) => void;
   onToggleLanguage: () => void;
+  muted: boolean;
+  onToggleMute: () => void;
 }
 
 export const TitleScreen: React.FC<TitleScreenProps> = ({
@@ -23,8 +27,12 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
   graphicsPreset,
   onChangeGraphics,
   onToggleLanguage,
+  muted,
+  onToggleMute,
 }) => {
   const isAr = language === 'ar';
+  const [panel, setPanel] = React.useState<'settings' | 'about' | null>(null);
+  const [guideStep, setGuideStep] = React.useState<number | null>(null);
 
   return (
     <div
@@ -103,52 +111,121 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
           </div>
         )}
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-3">
           <button
             type="button"
             data-start="true"
             onClick={onStart}
-            className="min-h-[52px] px-8 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-[0.98] text-[#1c1008] font-bold text-lg shadow-lg transition-all cursor-pointer whitespace-nowrap"
+            className="flex min-h-[58px] w-full items-center justify-center gap-3 rounded-xl bg-amber-500 px-8 py-3 text-lg font-extrabold text-[#1c1008] shadow-lg transition-all hover:bg-amber-400 active:scale-[0.98] cursor-pointer"
           >
+            <span className="text-2xl" aria-hidden="true">▶</span>
             {hasSavedProgress
-              ? isAr
-                ? 'كمّل الشغل في القهوة'
-                : 'Continue Coffeehouse'
-              : isAr
-                ? 'ابدأ اللعبة'
-                : 'Start Game'}
+              ? isAr ? 'متابعة اللعب' : 'Continue Game'
+              : isAr ? 'العب الآن' : 'Play Now'}
           </button>
+
           {hasSavedProgress && (
             <button
               type="button"
               onClick={onNewGame}
-              className="min-h-[52px] px-6 py-3 rounded-xl border border-amber-500/45 bg-[#2a190f] hover:bg-[#3a2414] text-amber-100 font-bold transition-colors cursor-pointer whitespace-nowrap"
+              className="min-h-[46px] w-full rounded-xl border border-amber-500/45 bg-[#2a190f] px-5 py-2.5 font-bold text-amber-100 transition-colors hover:bg-[#3a2414] cursor-pointer"
             >
-              {isAr ? 'ابدأ قهوة جديدة' : 'New Coffeehouse'}
+              {isAr ? 'ابدأ لعبة جديدة' : 'New Game'}
             </button>
           )}
+
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              onClick={() => setPanel('settings')}
+              className="flex min-h-[76px] flex-col items-center justify-center gap-2 rounded-xl border border-amber-700/45 bg-[#24160d]/90 px-2 py-3 text-sm font-bold text-amber-100 hover:bg-[#382314] cursor-pointer"
+            >
+              <Settings className="h-5 w-5 text-amber-300" />
+              {isAr ? 'الإعدادات' : 'Settings'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setGuideStep(0)}
+              className="flex min-h-[76px] flex-col items-center justify-center gap-2 rounded-xl border border-amber-700/45 bg-[#24160d]/90 px-2 py-3 text-sm font-bold text-amber-100 hover:bg-[#382314] cursor-pointer"
+            >
+              <BookOpen className="h-5 w-5 text-amber-300" />
+              {isAr ? 'طريقة اللعب' : 'How to Play'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPanel('about')}
+              className="flex min-h-[76px] flex-col items-center justify-center gap-2 rounded-xl border border-amber-700/45 bg-[#24160d]/90 px-2 py-3 text-sm font-bold text-amber-100 hover:bg-[#382314] cursor-pointer"
+            >
+              <Info className="h-5 w-5 text-amber-300" />
+              {isAr ? 'عن اللعبة' : 'About'}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Lightweight home-screen settings */}
-      <div className="flex flex-wrap items-center gap-3 pointer-events-auto">
-        <label className="flex items-center gap-2 rounded-xl border border-amber-700/40 bg-[#23160d]/80 px-4 py-3 text-sm text-amber-100">
-          <span>{isAr ? 'جودة الرسوم' : 'Graphics'}</span>
-          <select
-            value={graphicsPreset}
-            onChange={(event) => onChangeGraphics(event.target.value as GraphicsPreset)}
-            className="bg-transparent text-amber-200 outline-none cursor-pointer"
-            aria-label={isAr ? 'جودة الرسوم' : 'Graphics quality'}
-          >
-            <option value="low" className="bg-[#23160d]">{isAr ? 'خفيفة' : 'Low'}</option>
-            <option value="medium" className="bg-[#23160d]">{isAr ? 'متوسطة' : 'Medium'}</option>
-            <option value="high" className="bg-[#23160d]">{isAr ? 'عالية' : 'High'}</option>
-          </select>
-        </label>
-        <span className="text-xs text-amber-200/60">
-          {isAr ? 'اختار خفيفة لو الموبايل بيهنّج.' : 'Choose Low on slower phones.'}
-        </span>
-      </div>
+      {/* Home-screen settings and information panels */}
+      {panel && (
+        <div className="pointer-events-auto fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4">
+          <section dir={isAr ? 'rtl' : 'ltr'} className="w-full max-w-md rounded-2xl border border-amber-500/45 bg-[#1d120a] p-5 text-amber-50 shadow-2xl">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-xl font-extrabold text-amber-200">
+                {panel === 'settings' ? (isAr ? 'إعدادات اللعبة' : 'Game Settings') : (isAr ? 'عن القهوة البلدي' : 'About the Game')}
+              </h2>
+              <button type="button" onClick={() => setPanel(null)} aria-label={isAr ? 'إغلاق' : 'Close'} className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#3a2415] text-amber-100">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            {panel === 'settings' ? (
+              <div className="space-y-3">
+                <label className="flex min-h-14 items-center justify-between gap-3 rounded-xl border border-amber-800/40 bg-[#2a1a0f] px-4 py-3">
+                  <span className="font-bold">{isAr ? 'جودة الرسوم' : 'Graphics Quality'}</span>
+                  <select
+                    value={graphicsPreset}
+                    onChange={(event) => onChangeGraphics(event.target.value as GraphicsPreset)}
+                    className="max-w-[50%] rounded-lg bg-[#180f08] px-3 py-2 text-amber-200 outline-none"
+                    aria-label={isAr ? 'جودة الرسوم' : 'Graphics quality'}
+                  >
+                    <option value="low">{isAr ? 'خفيفة' : 'Low'}</option>
+                    <option value="medium">{isAr ? 'متوسطة' : 'Medium'}</option>
+                    <option value="high">{isAr ? 'عالية' : 'High'}</option>
+                  </select>
+                </label>
+                <button type="button" onClick={onToggleLanguage} className="flex min-h-14 w-full items-center justify-between rounded-xl border border-amber-800/40 bg-[#2a1a0f] px-4 py-3 font-bold">
+                  <span>{isAr ? 'لغة اللعبة' : 'Game Language'}</span>
+                  <span className="text-amber-300">{isAr ? 'العربية / English' : 'English / العربية'}</span>
+                </button>
+                <button type="button" onClick={onToggleMute} className="flex min-h-14 w-full items-center justify-between rounded-xl border border-amber-800/40 bg-[#2a1a0f] px-4 py-3 font-bold">
+                  <span>{isAr ? 'الصوت' : 'Sound'}</span>
+                  <span className="flex items-center gap-2 text-amber-300">
+                    {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                    {muted ? (isAr ? 'مكتوم' : 'Muted') : (isAr ? 'يعمل' : 'On')}
+                  </span>
+                </button>
+                <p className="text-xs leading-6 text-amber-200/65">
+                  {isAr ? 'اختار الجودة الخفيفة لو جهازك بيواجه بطء أو تقطيع.' : 'Choose Low if your device struggles with performance.'}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3 text-sm leading-7 text-amber-100/85">
+                <p>{isAr ? 'القهوة البلدي لعبة محاكاة وإدارة كوميدية مستوحاة من أجواء القهاوي المصرية.' : 'The Baladi Coffeehouse is a comedic management and life simulation inspired by Egyptian neighborhood cafes.'}</p>
+                <p>{isAr ? 'استقبل الزباين، حضّر المشروبات، عيّن العمال، طوّر المكان، وتعامل مع مواقف الحارة اليومية.' : 'Serve customers, prepare drinks, hire staff, upgrade your cafe, and handle the neighborhood’s daily surprises.'}</p>
+                <div className="rounded-xl border border-amber-800/40 bg-[#2a1a0f] p-3 text-amber-300">
+                  {isAr ? 'هدفك: خلّي قهوتك أشهر قهوة في الحتة!' : 'Your goal: make your cafe the most famous spot in the neighborhood!'}
+                </div>
+              </div>
+            )}
+          </section>
+        </div>
+      )}
+
+      {guideStep !== null && (
+        <TutorialModal
+          language={language}
+          step={guideStep}
+          onNext={() => setGuideStep((step) => step !== null && step < 3 ? step + 1 : null)}
+          onSkip={() => setGuideStep(null)}
+        />
+      )}
 
       {/* Bottom Clean Control Hint */}
       <div className="text-xs sm:text-sm text-amber-200/75 font-medium pointer-events-none">
