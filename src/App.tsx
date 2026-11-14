@@ -400,13 +400,11 @@ export default function App() {
   };
 
   const advanceTutorial = () => {
-    setTutorialStep((current) => {
-      if (current === null || current >= 3) {
-        finishTutorial();
-        return null;
-      }
-      return current + 1;
-    });
+    if (tutorialStep === null || tutorialStep >= 3) {
+      finishTutorial();
+      return;
+    }
+    setTutorialStep(tutorialStep + 1);
   };
 
   const handleCompleteDrink = ({
