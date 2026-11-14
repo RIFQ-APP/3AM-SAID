@@ -619,6 +619,16 @@ export default function App() {
               },
             }))
           }
+          muted={gameState.settings.audio.muted}
+          onToggleMute={() =>
+            setGameState((prev) => ({
+              ...prev,
+              settings: {
+                ...prev.settings,
+                audio: { ...prev.settings.audio, muted: !prev.settings.audio.muted },
+              },
+            }))
+          }
         />
       )}
 
