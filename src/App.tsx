@@ -673,7 +673,6 @@ export default function App() {
               ...prev,
               settings: { ...prev.settings, graphics },
             }));
-            engineRef.current?.setGraphicsPreset(graphics);
           }}
         />
       )}
