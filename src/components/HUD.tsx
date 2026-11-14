@@ -145,7 +145,7 @@ export const HUD: React.FC<HUDProps> = ({
     (m) => !m.claimed && m.completed
   ).length;
   const affordableUpgradesCount = Object.values(UPGRADES).filter(
-    (u) => !gameState.upgrades[u.id] && gameState.economy.balance >= u.cost
+    (u) => !gameState.upgrades[u.id] && gameState.economy.balance >= u.price
   ).length;
   const unhiredStaffCount = gameState.employees.filter((e) => !e.hired).length;
 
