@@ -1,0 +1,8 @@
+{
+  "name": "Remix The Baladi Coffeehouse — القهوة البلدي",
+  "description": "A stylized 3D Egyptian Baladi Coffeehouse simulation game with customer AI, interactive drink preparation, employee management, upgrades, and Egyptian humor.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
