@@ -180,6 +180,8 @@ export class CoffeehouseEngine {
   private isSoftwareGl: boolean;
   private frameId = 0;
   private disposed = false;
+  private loopRunning = false;
+  private pageHidden = typeof document !== 'undefined' && document.hidden;
 
   // Lighting & Atmosphere
   private keyLight!: THREE.DirectionalLight;
@@ -1434,11 +1436,26 @@ export class CoffeehouseEngine {
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(w, h);
     };
+    const onVisibilityChange = () => {
+      this.pageHidden = document.hidden;
+      if (this.pageHidden) {
+        this.loopRunning = false;
+        cancelAnimationFrame(this.frameId);
+        window.clearTimeout(this.frameId);
+        this.keys.clear();
+        this.joystick.x = 0;
+        this.joystick.y = 0;
+      } else {
+        this.lastTickMs = performance.now();
+        this.startLoop();
+      }
+    };
 
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
     window.addEventListener('blur', onBlur);
     window.addEventListener('resize', onResize);
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     // Store cleanup on instance
     this.cleanupListeners = () => {
@@ -1446,14 +1463,20 @@ export class CoffeehouseEngine {
       window.removeEventListener('keyup', onKeyUp);
       window.removeEventListener('blur', onBlur);
       window.removeEventListener('resize', onResize);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }
 
   private cleanupListeners: () => void = () => {};
 
   private startLoop(): void {
+    if (this.disposed || this.pageHidden || this.loopRunning) return;
+    this.loopRunning = true;
     const tick = () => {
-      if (this.disposed) return;
+      if (this.disposed || this.pageHidden) {
+        this.loopRunning = false;
+        return;
+      }
       const now = performance.now();
       const rawDt = (now - this.lastTickMs) / 1000;
       this.lastTickMs = now;
@@ -2442,6 +2465,7 @@ export class CoffeehouseEngine {
 
   public dispose(): void {
     this.disposed = true;
+    this.loopRunning = false;
     cancelAnimationFrame(this.frameId);
     clearTimeout(this.frameId);
     this.cleanupListeners();
