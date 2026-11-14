@@ -357,7 +357,9 @@ export class CoffeehouseEngine {
   }
 
   private initTextures(): void {
-    const maxAniso = this.renderer.capabilities.getMaxAnisotropy();
+    const maxSupportedAniso = this.renderer.capabilities.getMaxAnisotropy();
+    const graphics = this.gameStateSnapshot.settings.graphics;
+    const maxAniso = Math.min(maxSupportedAniso, graphics === 'low' ? 2 : graphics === 'medium' ? 4 : 8);
     this.shadowTex = createContactShadowTexture();
     this.woodTex = createWoodTexture('#5e3419', maxAniso);
     this.caneTexWorn = createWovenCaneTexture(false);
@@ -428,7 +430,9 @@ export class CoffeehouseEngine {
   }
 
   private buildArchitecture(): void {
-    const maxAniso = this.renderer.capabilities.getMaxAnisotropy();
+    const maxSupportedAniso = this.renderer.capabilities.getMaxAnisotropy();
+    const graphics = this.gameStateSnapshot.settings.graphics;
+    const maxAniso = Math.min(maxSupportedAniso, graphics === 'low' ? 2 : graphics === 'medium' ? 4 : 8);
     const { map: floorMap, bumpMap: floorBump } = createTileFloorTextures(maxAniso);
 
     // Patterned Ceramic Tile Floor
@@ -2438,7 +2442,8 @@ export class CoffeehouseEngine {
       if (!npc.data.bubbleText && !showState) {
         continue;
       }
-      _proj.copy(npc.pos).add(new THREE.Vector3(0, 2.08, 0));
+      _proj.copy(npc.pos);
+      _proj.y += 2.08;
       _proj.project(this.camera);
       const visible = _proj.z >= -1 && _proj.z <= 1;
       const sx = (_proj.x * 0.5 + 0.5) * w;
