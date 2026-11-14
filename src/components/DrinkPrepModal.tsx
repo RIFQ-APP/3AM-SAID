@@ -462,5 +462,7 @@ export const DrinkPrepModal: React.FC<DrinkPrepModalProps> = ({
         </div>
       </div>
     </div>
+      </div>
+    </div>
   );
 };
