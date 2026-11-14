@@ -584,7 +584,7 @@ export default function App() {
   const isAr = gameState.settings.language === 'ar';
 
   return (
-    <main className="relative w-full h-full overflow-hidden bg-[#16100b]">
+    <main className="relative w-screen h-[100dvh] min-h-[100svh] overflow-hidden bg-[#16100b]">
       {/* Isolated 3D WebGL Viewport Container */}
       {engineEnabled && (
         <div
@@ -667,6 +667,14 @@ export default function App() {
             setActiveTab(tab);
           }}
           onOpenPrep={() => setPrepOpen(true)}
+          graphicsPreset={gameState.settings.graphics}
+          onChangeGraphics={(graphics) => {
+            setGameState((prev) => ({
+              ...prev,
+              settings: { ...prev.settings, graphics },
+            }));
+            engineRef.current?.setGraphicsPreset(graphics);
+          }}
         />
       )}
 
