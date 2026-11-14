@@ -5,6 +5,7 @@ import { HUD } from './components/HUD';
 import { ManagementDrawers, ManagementTab } from './components/ManagementDrawers';
 import { PauseModal } from './components/PauseModal';
 import { TitleScreen } from './components/TitleScreen';
+import { TutorialModal } from './components/TutorialModal';
 import { soundEngine } from './game/audio';
 import { DRINKS, INGREDIENTS, UPGRADES } from './game/catalog';
 import { createRandomEvent } from './game/dialogue';
@@ -53,6 +54,13 @@ export default function App() {
   const engineRef = useRef<CoffeehouseEngine | null>(null);
 
   const [gameState, setGameState] = useState<GameState>(() => loadGameState());
+  const [tutorialStep, setTutorialStep] = useState<number | null>(() => {
+    try {
+      return localStorage.getItem('baladi_tutorial_completed') === 'true' ? null : 0;
+    } catch {
+      return 0;
+    }
+  });
   const [screenState, setScreenState] = useState<GameScreenState>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -382,6 +390,25 @@ export default function App() {
     setScreenState('playing');
   };
 
+  const finishTutorial = () => {
+    try {
+      localStorage.setItem('baladi_tutorial_completed', 'true');
+    } catch {
+      // Tutorial completion is optional if storage is unavailable.
+    }
+    setTutorialStep(null);
+  };
+
+  const advanceTutorial = () => {
+    setTutorialStep((current) => {
+      if (current === null || current >= 3) {
+        finishTutorial();
+        return null;
+      }
+      return current + 1;
+    });
+  };
+
   const handleCompleteDrink = ({
     order,
     drinkId,
@@ -651,6 +678,16 @@ export default function App() {
             else soundEngine.playReward();
           }}
           onCompleteDrink={handleCompleteDrink}
+        />
+      )}
+
+      {/* First-session tutorial */}
+      {screenState === 'playing' && tutorialStep !== null && (
+        <TutorialModal
+          language={gameState.settings.language}
+          step={tutorialStep}
+          onNext={advanceTutorial}
+          onSkip={finishTutorial}
         />
       )}
 
