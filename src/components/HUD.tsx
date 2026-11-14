@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import {
   AlertTriangle,
   ClipboardList,
+  Clock3,
   Coins,
   Star,
   CalendarDays,
@@ -309,55 +310,31 @@ export const HUD: React.FC<HUDProps> = ({
         aria-hidden="true"
       />
 
-      {/* Floating 3D-Projected Overhead Customer Icons & Speech Bubbles */}
-      {bubbles.map((b) => {
-        const drink = b.orderDrinkId ? DRINKS[b.orderDrinkId] : null;
-        const isWaitingOrAngry = b.state === 'waiting' || b.state === 'complaining';
-        const isAngry = b.state === 'complaining' || b.patiencePct < 30;
-        const activityBadge = renderActivityBadge(b.activity, isAngry);
-
-        return (
-          <div
-            key={b.id}
-            dir="rtl"
-            style={{
-              left: `${b.x}px`,
-              top: `${b.y}px`,
-              transform: 'translate(-50%, -100%)',
-            }}
-            className="absolute z-10 max-w-[220px] pointer-events-none flex flex-col items-center"
-          >
-            {/* Visual overhead icon bar (drink glass / shisha / tawla / angry alert) */}
-            {(isWaitingOrAngry || activityBadge) && (
-              <div className="mb-1 flex items-center gap-1.5">
-                {activityBadge}
-                {isWaitingOrAngry && drink && (
-                  <div
-                    className={`px-2 py-1 rounded-xl border text-xs font-bold flex items-center gap-1.5 shadow-md ${
-                      isAngry
-                        ? 'bg-red-950/95 border-red-400 text-red-100'
-                        : 'bg-[#1e120a]/95 border-amber-400/80 text-amber-100'
-                    }`}
-                  >
-                    {renderDrinkOverheadIcon(b.orderDrinkId)}
-                    <span className="truncate max-w-[92px]">{drink.nameAr}</span>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {b.text && (
-              <div className="px-3 py-1.5 rounded-xl bg-[#fff8eb]/95 text-[#231409] border border-amber-700/45 shadow-md text-xs sm:text-sm leading-snug">
-                <div className="font-extrabold text-[11px] text-amber-900 mb-0.5">
-                  {b.nameAr}
-                </div>
-                <div className="font-semibold">{b.text}</div>
-              </div>
-            )}
+      {/* Minimal customer timer only — tap a guest for the full profile. */}
+      {bubbles.map((b) => (
+        <div
+          key={b.id}
+          dir="ltr"
+          style={{
+            left: `${b.x}px`,
+            top: `${b.y}px`,
+            transform: 'translate(-50%, -100%)',
+          }}
+          className="absolute z-10 pointer-events-none"
+        >
+          <div className={`flex items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-black tabular-nums shadow-lg backdrop-blur-sm ${
+            b.patiencePct < 25
+              ? 'border-red-300/80 bg-red-950/90 text-red-100'
+              : b.patiencePct < 55
+                ? 'border-amber-300/80 bg-amber-950/90 text-amber-100'
+                : 'border-white/25 bg-[#1b1109]/85 text-white'
+          }`}>
+            <Clock3 className="h-3 w-3" />
+            <span>{Math.max(0, Math.round(b.patiencePct))}%</span>
           </div>
-        );
-      })}
-
+        </div>
+      ))}
+      
       {/* Top Perimeter Bar — Clean, Enlarged Essential Metrics */}
       <div className="relative z-20 flex flex-wrap items-start justify-between gap-2 p-2.5 sm:p-3.5 pointer-events-none">
         {/* Top-Start Economy & Progression Strip */}

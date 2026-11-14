@@ -468,6 +468,21 @@ export function createCharacterRig(
     bodyPivot.add(badge);
   }
 
+  // Tailored collar seam adds a more dimensional, finished look to the new cast.
+  const collarSeamMat = new THREE.MeshStandardMaterial({
+    color: '#f3dfbd',
+    roughness: 0.78,
+    transparent: true,
+    opacity: 0.72,
+  });
+  const collarSeam = new THREE.Mesh(
+    new THREE.TorusGeometry(0.09, 0.008, 5, 18, Math.PI),
+    collarSeamMat
+  );
+  collarSeam.position.set(0, 1.39, 0.02);
+  collarSeam.rotation.x = Math.PI / 2;
+  bodyPivot.add(collarSeam);
+
   // ==========================================================
   // 3. ARTICULATED ARMS (Shoulder -> Sleeve -> Elbow -> Forearm -> Hand)
   // ==========================================================
@@ -593,7 +608,7 @@ export function createCharacterRig(
   const craniumGeo = new THREE.SphereGeometry(0.162, 22, 18, -Math.PI / 2, Math.PI * 2);
   const cranium = new THREE.Mesh(craniumGeo, faceMat);
   cranium.position.set(0, 0.242, -0.005);
-  cranium.scale.set(0.94, 1.06, 1.02);
+  cranium.scale.set(1.02, 1.12, 1.06);
   cranium.castShadow = true;
   headGroup.add(cranium);
 
@@ -601,7 +616,7 @@ export function createCharacterRig(
   const jawGeo = new THREE.SphereGeometry(0.132, 18, 14);
   const jaw = new THREE.Mesh(jawGeo, skinMat);
   jaw.position.set(0, 0.168, 0.014);
-  jaw.scale.set(0.91, 0.88, 0.96);
+  jaw.scale.set(0.98, 0.94, 1.02);
   jaw.castShadow = true;
   headGroup.add(jaw);
 
@@ -615,7 +630,7 @@ export function createCharacterRig(
   [-1, 1].forEach((side) => {
     const ear = new THREE.Mesh(new THREE.SphereGeometry(0.036, 10, 10), skinMat);
     ear.position.set(side * 0.148, 0.215, -0.008);
-    ear.scale.set(0.45, 1.15, 0.82);
+    ear.scale.set(0.58, 1.28, 0.9);
     ear.rotation.y = side * 0.2;
     headGroup.add(ear);
   });
@@ -650,11 +665,11 @@ export function createCharacterRig(
     eyeSocket.rotation.y = ex < 0 ? -0.18 : 0.18;
     headGroup.add(eyeSocket);
 
-    const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.026, 14, 12), eyeWhiteMat);
+    const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.029, 16, 14), eyeWhiteMat);
     sclera.scale.set(1.06, 0.9, 0.56);
     eyeSocket.add(sclera);
 
-    const iris = new THREE.Mesh(new THREE.SphereGeometry(0.016, 12, 10), irisMat);
+    const iris = new THREE.Mesh(new THREE.SphereGeometry(0.0175, 14, 12), irisMat);
     iris.scale.set(1.0, 1.0, 0.45);
     iris.position.set(0, -0.001, 0.011);
     eyeSocket.add(iris);
@@ -664,12 +679,12 @@ export function createCharacterRig(
     pupil.position.set(0, -0.001, 0.015);
     eyeSocket.add(pupil);
 
-    const glint = new THREE.Mesh(new THREE.SphereGeometry(0.0042, 6, 6), glintMat);
+    const glint = new THREE.Mesh(new THREE.SphereGeometry(0.0055, 8, 8), glintMat);
     glint.position.set(0.005, 0.006, 0.018);
     eyeSocket.add(glint);
 
     const upperLid = new THREE.Mesh(
-      new THREE.SphereGeometry(0.0285, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.45),
+      new THREE.SphereGeometry(0.031, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.45),
       lidMat
     );
     upperLid.scale.set(1.08, 0.92, 0.62);
@@ -700,14 +715,14 @@ export function createCharacterRig(
 
   // Expressive Smiling Mouth (curved TubeGeometry lip line)
   const mouthGroup = new THREE.Group();
-  mouthGroup.position.set(0, 0.138, 0.144);
+  mouthGroup.position.set(0, 0.135, 0.151);
   const mouthCurve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(-0.038, 0.006, -0.008),
     new THREE.Vector3(0, -0.006, 0.006),
     new THREE.Vector3(0.038, 0.006, -0.008),
   ]);
   const mouthMesh = new THREE.Mesh(
-    new THREE.TubeGeometry(mouthCurve, 12, 0.007, 6, false),
+    new THREE.TubeGeometry(mouthCurve, 14, 0.009, 7, false),
     new THREE.MeshStandardMaterial({ color: '#6b201c', roughness: 0.5 })
   );
   mouthGroup.add(mouthMesh);

@@ -966,6 +966,8 @@ export class CoffeehouseEngine {
       const seatConfigs: Array<{ dx: number; dz: number; rotY: number }> = [
         { dx: -1.02, dz: 0, rotY: Math.PI / 2 },
         { dx: 1.02, dz: 0, rotY: -Math.PI / 2 },
+        { dx: 0, dz: -1.02, rotY: 0 },
+        { dx: 0, dz: 1.02, rotY: Math.PI },
       ];
 
       const chairMeshes: THREE.Group[] = [];
@@ -1006,14 +1008,17 @@ export class CoffeehouseEngine {
   private initPlayer(): void {
     this.playerRig = createCharacterRig(
       {
-        shirtColor: '#f8fafc',
-        pantsColor: '#1e293b',
-        skinColor: '#d99b6a',
-        hairColor: '#1a1513',
-        apronColor: '#1d4ed8',
-        headwear: 'cap',
-        outfitStyle: 'shirt',
+        shirtColor: '#f2e8d5',
+        pantsColor: '#29231f',
+        skinColor: '#c98558',
+        hairColor: '#17110e',
+        apronColor: '#7a2e1e',
+        headwear: 'fez',
+        outfitStyle: 'vest_galabeya',
         hasMustache: true,
+        mustacheStyle: 'handlebar',
+        hasBeard: true,
+        bodyBuild: 'broad',
         isOwner: true,
       },
       this.shadowTex
@@ -1332,7 +1337,7 @@ export class CoffeehouseEngine {
         if (!s.occupiedBy) availableSeats.push({ table: t, seatIdx: idx });
       });
     }
-    if (availableSeats.length === 0 || this.npcs.length >= 9) return;
+    if (availableSeats.length === 0 || this.npcs.length >= 14) return;
 
     const pick = pickRandom(availableSeats);
     const id = `cust_${this.npcCounter++}`;
@@ -1693,7 +1698,7 @@ export class CoffeehouseEngine {
     const repBonus = 1 - Math.min(0.4, this.gameStateSnapshot.reputation / 250);
     this.npcSpawnTimer -= dt;
     if (this.npcSpawnTimer <= 0) {
-      this.npcSpawnTimer = timeInfo.spawnIntervalSec * repBonus;
+      this.npcSpawnTimer = Math.max(5.5, timeInfo.spawnIntervalSec * repBonus * 0.82);
       this.spawnCustomer();
     }
 
@@ -2539,13 +2544,7 @@ export class CoffeehouseEngine {
     const list: ProjectedBubble[] = [];
 
     for (const npc of this.npcs) {
-      const showState =
-        npc.data.state === 'waiting' ||
-        npc.data.state === 'complaining' ||
-        npc.data.activity !== 'none';
-      if (!npc.data.bubbleText && !showState) {
-        continue;
-      }
+      if (npc.data.state === 'leaving') continue;
       _proj.copy(npc.pos);
       _proj.y += 2.08;
       _proj.project(this.camera);
@@ -2556,11 +2555,11 @@ export class CoffeehouseEngine {
       if (visible && sx > 24 && sx < w - 24 && sy > 88 && sy < h - 80) {
         list.push({
           id: npc.data.id,
-          nameAr: npc.data.nameAr,
-          text: npc.data.bubbleText,
+          nameAr: '',
+          text: '',
           state: npc.data.state,
-          activity: npc.data.activity,
-          orderDrinkId: npc.data.orderedDrink,
+          activity: 'none',
+          orderDrinkId: null,
           patiencePct: Math.round(npc.data.patienceLeft),
           x: Math.round(sx),
           y: Math.round(sy),
